@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from "firebase/auth";
+import React, { useRef, useState } from 'react';
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../firebase.init';
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -8,6 +8,7 @@ const Login = () => {
     const [success, setSuccess] = useState(false);
     const [loginError, setLoginError] = useState('');
     const [showPass, setShowPass] = useState(false);
+    const emailRef = useRef();
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -33,6 +34,23 @@ const Login = () => {
             })
 
     }
+
+    const handleForgetPassword = () =>{
+        // console.log('get me email address', emailRef.current.value)
+        const email = emailRef.current.value;
+        if(!email){
+            setLoginError('Please Provide a valid email address')
+            console.log('Please Provide a valid email address')
+        } else{
+            sendPasswordResetEmail(auth, email)
+            .then(() => {
+                alert('Password reset email sent, please check your email')
+              })
+              .catch((error) => {
+                console.log(error)
+              });
+        }
+    }
     return (
 
         <div className="card py-3 mx-auto bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
@@ -42,7 +60,7 @@ const Login = () => {
                     <label className="label">
                         <span className="label-text">Email</span>
                     </label>
-                    <input type="email" name='email' placeholder="email" className="input input-bordered" required />
+                    <input type="email" name='email' ref={emailRef} placeholder="email" className="input input-bordered" required />
                 </div>
                 <div className="form-control relative">
                     <label className="label">
@@ -58,7 +76,7 @@ const Login = () => {
                         }
                     </button>
 
-                    <label className="label">
+                    <label onClick={handleForgetPassword} className="label">
                         <a href="#" className="label-text-alt link link-hover">Forgot password?</a>
                     </label>
                 </div>
