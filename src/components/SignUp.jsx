@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import React, { useState } from 'react';
 import { auth } from '../firebase.init';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -40,6 +40,12 @@ const SignUp = () => {
             .then(result => {
                 console.log(result.user)
                 setSuccess(true);
+
+                // send verification email address 
+                sendEmailVerification(auth.currentUser)
+                .then(() =>{
+                    console.log('Verification email sent');
+                })
             })
             .catch(error => {
                 console.log('ERROR', error.message);
@@ -49,7 +55,7 @@ const SignUp = () => {
     }
     return (
         <div className="card bg-base-100 w-full max-w-sm mx-auto shrink-0 shadow-2xl">
-            <h1 className="text-5xl font-bold ">Sign Up Now</h1>
+            <h1 className="text-5xl font-bold text-center">Sign Up Now</h1>
             <form onSubmit={handleSignUp} className="card-body my-5">
                 <div className="form-control">
                     <label className="label">
